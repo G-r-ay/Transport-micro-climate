@@ -5,8 +5,27 @@ import pandas as pd
 from sklearn.preprocessing import OrdinalEncoder
 
 # Load the saved model weights
-selected_columns = ['fkSensorSerialId_inner', 'temp_inner', 'long_inner', 'index_inner', 'lat_inner', 'feels_like_inner', 'dt_hour_inner', 'timestamp_hour_inner', 'wind_deg_inner', 'pressure_inner', 'wind_gust_inner',
-                    'fkLinkSerialId', 'sunrise_minute_inner', 'msla_inner', 'Compiled_Loaction_inner', 'humidity%_inner', 'heading_inner', 'wind_speed_inner', 'sunset_minute_inner', 'timestamp_day_inner', 'visibility_inner', 'clouds_inner']
+selected_columns = ['fkSensorSerialId_inner',
+                    'temp_inner',
+                    'long_inner',
+                    'lat_inner',
+                    'feels_like_inner',
+                    'dt_hour_inner',
+                    'timestamp_hour_inner',
+                    'wind_deg_inner',
+                    'pressure_inner',
+                    'wind_gust_inner',
+                    'fkLinkSerialId',
+                    'sunrise_minute_inner',
+                    'msla_inner',
+                    'Compiled_Loaction_inner',
+                    'humidity%_inner',
+                    'heading_inner',
+                    'wind_speed_inner',
+                    'sunset_minute_inner',
+                    'timestamp_day_inner',
+                    'visibility_inner',
+                    'clouds_inner']
 
 
 class TempHumidModel(nn.Module):
@@ -29,7 +48,7 @@ class TempHumidModel(nn.Module):
 
 
 model_weights_path = 'Model_weights/inner_temperature_humidity.pt'
-model = TempHumidModel(22, 1024)
+model = TempHumidModel(21, 1024)
 model.load_state_dict(torch.load(model_weights_path,
                       map_location=torch.device('cpu')))
 model.eval()
@@ -70,12 +89,32 @@ def predict_temperature_humidity(data):
     # Return the predictions
     return predictions.tolist()
 
+# Function to get user input as a dataframe or manually for each column
 
-# Interactive input
-input_data = {}
-for column in selected_columns:
-    value = input(f"Enter value for column '{column}': ")
-    input_data[column] = [value]
+
+def get_user_input():
+    input_type = input(
+        "Enter '1' to input data as a dataframe, or '2' to input manually: ")
+
+    if input_type == '1':
+        # Input data as a dataframe
+        file_path = input("Enter the path to the data file (CSV format): ")
+        dataframe = pd.read_csv(file_path)
+        return dataframe
+    elif input_type == '2':
+        # Manually input data for each column
+        input_data = {}
+        for column in selected_columns:
+            value = input(f"Enter value for column '{column}': ")
+            input_data[column] = [value]
+        return pd.DataFrame(input_data)
+    else:
+        print("Invalid input. Please try again.")
+        return get_user_input()
+
+
+# Get user input
+input_data = get_user_input()
 
 # Make predictions using the user input
 predictions = predict_temperature_humidity(input_data)
