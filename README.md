@@ -28,4 +28,4 @@ To use the files in this repository, follow these steps:
 4. Use the files as per your requirements.
 
 ## License
-This project is licensed under the [MIT License](LICENSE.md).
+This project is licensed under the [MIT License](LICENSE).
